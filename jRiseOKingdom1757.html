@@ -1,0 +1,104 @@
+<!Doctype HTML>
+<html>
+<head>
+<meta charset='UTF-8'>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<title>Fight!</title>
+<style>
+#bttg{
+width:70%;
+height:70%;
+}
+</style>
+
+</head>
+<body>
+<canvas id='bttg'></canvas>
+<h1 id='head'>0</h1>
+<h1>Time left:<span id='time'>10</span></h1>
+<script>
+var battleground = document.getElementById('bttg');
+var draw = battleground.getContext('2d');
+var bx = battleground.width;
+var by = battleground.height;
+var px = bx/2;
+var py = by/2;
+var ox;
+var oy;
+var oex;
+var oey;
+var score = 0;
+var distance;
+var health = 10;
+var so = 10;
+var st = 10;
+document.onkeydown = function(event){
+var key = event.keyCode;
+console.log(key);
+if(key == 37){
+px -= 1;
+}
+if(key == 40){
+py += 1;
+}
+if(key == 39){
+px += 1;
+}
+if(key == 38){
+py -= 1;
+}};
+function opponpath(){
+ox = Math.round(Math.random()*bx/2);
+oy = Math.round(Math.random()*by/2);
+oex = Math.round(Math.random()*bx);
+oey = Math.round(Math.random()*by);
+}
+opponpath();
+function play(){
+draw.clearRect(0,0,bx,by)
+
+draw.fillStyle = 'Blue';
+draw.fillRect(px,py,so,st);
+draw.fillStyle = 'Red';
+draw.fillRect(ox,oy,10,10);
+ox++;
+oy++;
+if(ox > oex){ox = oex;}
+if(oy > oey){oy = oey;}
+if(px > bx){px = 0;}
+if(py > by){py = 0;}
+if(px < 0){px = bx;}
+if(py < 0){py = by;}
+if(ox > bx){oy = 0;}
+if(oy > bx){ox = 0;}
+if(ox < 0){oy = by;}
+if(oy < 0){ox = bx;}
+
+if(distance == 10 || distance < 10){
+score++;
+document.getElementById('head').innerHTML = score;
+health = 10;
+document.getElementById('time').innerHTML = health;
+opponpath();
+}
+if(health == 0 || health < 0){draw.clearRect(0,0,bx,by);
+document.getElementById('head').innerHTML = 'You lose,your score is ' + score;
+so = 0;
+st = 0;
+px = 0;
+}}
+function distance(){
+var xo = Math.pow(px - ox,2);
+var yo = Math.pow(py - oy,2);
+distance = Math.sqrt(xo + yo);
+}
+function oww(){
+health--;
+document.getElementById('time').innerHTML = health;
+}
+setInterval(play,30);
+setInterval(distance,30);
+setInterval(oww,1000); 
+</script>
+</body>
+</html>

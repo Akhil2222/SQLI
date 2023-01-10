@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Friday night funkin with any song</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        #fnf_notes{
+            height: 55px;
+            width: 200px;
+            background-image: url("fnf_notes.png");
+            background-position: 0px -220px;
+        }
+        #Boyfriend{
+            width: 413px;
+            height: 470px;
+            background-image: url("Browser Games - Friday Night Funkin - Boyfriend Default.png");
+            background-position: -0px -55px;
+        }
+    </style>
+</head>
+<body>
+    <p id='fnf_notes'></p>
+    <p id='Boyfriend'></p>
+    <script>
+    function sprite(width, fwidth, widthd, fheight,heightd,element){
+        var l = widthd;
+        setInterval(()=>{
+            l += fwidth
+            if(fwidth >= width){
+                l = 0
+            }
+            element.style.backgroundPosition = `-${l}px -${heightd}px`
+        },30)
+    }        
+    </script>
+</body>
+</html>

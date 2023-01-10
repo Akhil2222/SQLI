@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        .match{
+            width:3em;
+            margin-left:0.5em;
+        }
+        
+    </style>
+</head>
+<body>
+    <audio src="matchsong.mp3" autoplay loop></audio>
+    <div id="matches"></div>
+    <script>
+        // To win a game of 21, you have to be the one to get to exactly 16
+        for(var i = 0;i < 21;i++){
+            $('#matches').append(`<img src='match.svg' id='${i}' class='match' bbb='aaa'/>`)
+        }
+        var hover;
+        var start;
+        $('.match').hover(function(){
+            hover = this.id
+            start = Number($('.match')[0].id)
+            for(var i = start;i < 21;i++){
+                $(`#${i}`).css('background-color','rgb(255,255,255)')
+            }
+            var check = 0
+            for(var i = start;i <= Math.min(start+3,hover);i++){
+                $(`#${i}`).css('background-color','rgb(105, 132, 164)')
+                $(`#${i}`).attr('bbb','bbb')
+                check++
+            }
+        })
+        $('.match').click(function(){
+            $('[bbb="bbb"]').remove()
+            if($('.match')[0] == undefined){
+                alert('You lose')
+                location.reload()
+            }
+            start = Number($('.match')[0].id)
+            console.log(5 - (start % 5))
+            for(var i = 0; i < 5 - (start % 5);i++){
+                 $(`#${i + start}`).remove()
+                 console.log(1 + i + start)
+            }
+            start = Number($('.match')[0].id)
+
+        })
+        var methods = []
+        
+        methods = new Set(methods)
+        console.log(methods)
+    </script>
+</body>
+</html>

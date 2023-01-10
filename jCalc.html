@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <meta charset='UTF-8'>
+ <title>Online calculator!With a feedback center!</title>
+ <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+ <style>
+ input,select{
+ border:3px dashed hsl(25,70%,80%);
+ border-radius:360px;
+ -moz-border-radius:360px;
+ -webkit-border-radius:360px;
+ -moz-box-shadow:3px 3px 3px 3px hsl(335,30%,20%);
+ -webkit-box-shadow:3px 3px 3px 3px hsl(335,30%,20%);
+ box-shadow:3px 3px 3px 3px hsl(335,30%,20%);
+ width:2cm;
+ }
+ button{width:2cm;}
+ .title{
+ font-size:70px;
+ text-align:center;
+ color:hsl(234,70%,60%);
+ text-transform:capitalize;
+ }
+ div{
+ display:flex;
+ flex-direction:column;
+ }
+ body{
+ background-color:hsl(135,36%,43%);
+ }
+ p{
+ text-align:justify;
+ width:500px;
+ height:100px;
+ overflow:hidden;
+ }
+
+ p:hover{
+ text-align:justify;
+ width:500px;
+ height:100px;
+ overflow:scroll;
+ }
+ .oper{
+ text-align:center;
+ }
+ </style>
+ </head>
+ <body>
+ <h1 class='title'>Calculator with your own thoughts</h1>
+ <div>
+ <input type='number' id='firstNum'/><br/>
+ <select id='operations'>
+ <option value='+'>+</option>
+ <option value='-'>-</option>
+ <option value='x'>&#215;</option>
+ <option value='halve'>&#247;</option>
+ <option value='expo'>^</option>
+ </select><br/>
+ <input type='number' id='secNum'/><br/>
+ <button id='calc'>=</button><br/>
+ <input id='ans'/><br/>
+ <script>
+ 
+ var elCalc = document.getElementById('calc');
+ function onmousedownDoThis(){
+ var elFirstNum = Number(document.getElementById('firstNum').value);
+ var elSecNum = Number(document.getElementById('secNum').value);
+ var elOper = document.getElementById('operations').value;
+ var x;
+ switch(elOper){
+case '+':
+x = elFirstNum + elSecNum; 
+break;
+
+case '-':
+x = elFirstNum - elSecNum;
+break;
+
+case 'x':
+x = elFirstNum * elSecNum;
+break;
+
+case 'halve':
+x = elFirstNum / elSecNum;
+break;
+
+case 'expo':
+x = Math.pow(elFirstNum,elSecNum)
+break;
+
+default:
+x = elFirstNum;
+break;
+}
+ console.log(elFirstNum + ' ' + elSecNum);
+ document.getElementById('ans').value = x;
+ }
+ elCalc.onmousedown = onmousedownDoThis;
+ </script>
+ </div><br/>
+  <div>
+ <h1 class='title'>Addition</h1>
+ <p class='oper'>Adding is fairly simple.If we were doing 213+908,first we add the ones,which give us <i>1</i>1.We keep the 1,and put the one in the tens place of 3+8 and add it to the tens place of the addition problem.Our ones place is 1. In our tens place we have <i>1</i>+1+0. The first one came from our carry-over.Our ones place and tens place is 21.Our final place is 2+9.That gives us 11.We do no carry-overs because there are no place values to the left of the 2 and 9.That is on how you add.</p><br/><br/>
+ <h1 class='title'>Subtraction</h1>
+ <p class='oper'>Subtract: 490-321.Subtraction is the opposite of addition.490-321 is calculated by these steps:<br/>1.Do 0-1.Since you can't do that,9-1=8,10-1=9.<br/>2.Do 8-2.8-2=6.<br/>3.Do 4-3.4-3=1.</br>Our answer is 169.</p><br/><br/><br/>
+ <h1 class='title'>Multiplication</h1>
+ <p class='oper'>Say we are multiplying 16&#215;38.First,we would do 16&#215;8,giving us 128.Next,we do 16&#215;30 on the next line,which is 480.Now the problem looks like this after the lat step,adding 128 to 480,with the answer:<br/>
+  16<br/>
+ &#215;38<br/>
+ ______<br/>
+  128<br/>
+ +480<br/>
+______<br/>
+  608.<br/>
+  That is on how you do 2-digit by 2-digit multiplication</p><br/><br/>
+ <h1 class='title'>Division</h1>
+ <p class='oper'>Division is the opposite of multiplication,and is repeated subtraction.Say we were doing 188&#247;3.First we would see if 1 divides into 3 evenly.No.Then we see if 18 divdes into 3.Yes,it does.18&#247;3=6.Then we do 8&#247;3,giving us 2,with a remainder of 2.Our answer is 62R2 (note thar R means remainder).That is how you do division.</p> 
+ </div><br/>
+ <div>
+ <label for='likewrite'>Write what you like:</label>
+ <textarea id='likewrite' maxlength='1000'>You liked...</textarea>
+ <script>
+ var v = document.getElementById('likewrite');
+ function y(){
+ var entText = document.getElementById('likewrite').value;
+ var tele = 1000 - entText.length;
+ console.log(tele);
+ }
+ v.onkeydown = y;
+ </script>
+ </div>
+ <h6 id='copy'>&#169; 2018-2019 by Akhil Yadavalli</h6>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+<div id='jCoAd'style='background-color:green !important'>jCo.You want games,don&rsquo;t you?</div>
+ <script>
+ $(function(){
+ $('.title').on('mouseover',function(){
+ $(this).animate({
+ opacity:1.3,
+ paddingRight:'+=80'
+ },50,function(){
+ $(this).animate({
+ opacity:0.7,
+ paddingLeft:'+=80'
+ },475,function(){
+ $(this).fadeIn(300);
+ });
+ });
+ });
+ $('.title').next().on('blur',function(){
+ $(this).animate({
+ opacity:0.7,
+ paddingLeft:'+=10'
+ },475,function(){
+ $(this).stop();
+ });
+ });
+ $('p').on('mouseout',function(){
+ $(this).slideDown(10).slideUp(10);
+ });
+ });
+$(function(){
+ var $left = $('#copy').offset().top - $(window).height();
+ var $finish = $('#copy').offset().top - $(window).height() - $left;
+ var $jCoAd = $('#jCoAd');
+ $(window).on('scroll',function(){
+ if ( ($finish)<$(window).scrollTop()){
+ $jCoAd.animate({'right':'0px'},$left/2);
+ }else{
+ $jCoAd.stop(true).animate({'right':'-360px'},$left/2)
+}});
+ $jCoAd.on('mousedown',function(){
+$(this).remove();
+});
+});
+ </script>
+ </body>
+ </html>

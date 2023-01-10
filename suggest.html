@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Suggest ideas</title>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+    <style>
+        .ideas{
+            border: 1px solid black
+        }
+        form{
+            border: 1px solid black;
+            display: grid;
+        }
+    </style>
+</head>
+<body>
+    <h1>Suggest Ideas</h1>
+    <form id='idea'>
+        <textarea id='help' placeholder='Idea' required></textarea>
+        <input placeholder='Name' id='n' required type='text' />
+        <input id='platform' placeholder='Platforms(Only iOS, Android, and web platforms are supported)' required/>
+        <button type='submit'>Submit</button>
+    </form>
+    <div id='t'></div>
+    <button id='admin'>Access admin mode</button>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyDYCTcZZsuY3oATYn3AuAUgYR_amshDh4E",
+            authDomain: "suggestions-718a9.firebaseapp.com",
+            projectId: "suggestions-718a9",
+            storageBucket: "suggestions-718a9.appspot.com",
+            messagingSenderId: "232833511643",
+            appId: "1:232833511643:web:ff51e45442cff279591cfe"
+        };
+        firebase.initializeApp(firebaseConfig)
+        var db = firebase.database()
+        var uid = 'bb50'.toUpperCase()
+        document.getElementById('idea').onsubmit = function(event){
+            event.preventDefault()
+            db.ref(`ideas/${document.querySelector('#n').value.replaceAll(' ','_').replace('"',"~")}`).set({
+                'Idea':document.querySelector('#help').value,
+                'Platforms':document.querySelector('#platform').value
+            })
+        }
+        db.ref(`ideas`).on('value',(data)=>{
+            var dataobj = data.val()
+            console.log(dataobj)
+            var feeddata = Object.entries(dataobj)
+            document.querySelector('#t').innerHTML = ''
+            for(var i of feeddata){
+                document.querySelector('#t').innerHTML += `<div id=${i[0]} class='ideas'><h2>Idea by:${i[0].replaceAll('_',' ').replaceAll('~','"')}</h2><p>${i[1]['Idea']}</p><h6>${i[1]['Platforms']}</h6></div>`
+            }
+        })
+        document.querySelector('#admin').onclick = function(){
+            if(prompt('Access code').toUpperCase() == uid){
+                alert('Access granted')
+                for(i of document.querySelectorAll('.ideas')){
+                    i.oncontextmenu = function(event){
+                        event.preventDefault()
+                        if(confirm('Are you sure you want to delete this idea?')){
+                            db.ref(`ideas/${this.id}`).remove()
+                            this.remove()                            
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

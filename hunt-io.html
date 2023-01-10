@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Hunt.io</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='https://jtech.best/jRip.js'></script>
+    <script src='https://jtech.best/stats2.js'></script>
+    <style>
+        body{
+            background-color: lawngreen;
+            overflow: hidden;
+        }
+        .log{
+            background-color: brown;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+
+        }
+        #player{
+            left:50%;
+            top:50%;
+            background-color: blue;
+            width:20px;
+            height:20px;
+            position:absolute;
+        }
+    </style>
+</head>
+<body>
+    <div id='player'></div>
+    <div id='locate'></div>
+    <div id='container'>
+
+    </div>
+    <script>
+        var sqsize = 20
+        class tree{
+            constructor(pos,tid){
+                this.pos = pos;
+                this.quantity = Math.round(1+Math.random()*9)
+                this.tid = tid
+            }
+            div(pos){
+                var newpos = [(this.pos[0]-(pos[0]+innerWidth/2))*20,(this.pos[1]-(pos[1]+innerHeight/2))*20]
+                return `<div style='left:${newpos[0]}px;top:${newpos[1]}px;' class='log' id=${'t'+this.tid}></div>`
+            }
+        }
+        var size = [2000,2000]
+        var crfplc = []
+        var collinf;
+        var coll = false
+        var arrows = 10;
+        var rarity = 80;
+        var ppos = [(1+Math.random()*(size[0]-1)),(1+Math.random()*(size[1]-1))]
+        var counter = 0;
+        for(var i = rarity;i < size[0];i += rarity){
+            for(var j = rarity;j < size[1];j += rarity){
+                crfplc.push(new tree([i,j],counter))
+                counter++
+            }
+        }
+        console.log(crfplc)
+        setInterval(()=>{
+        $('#container').innerHTML = ''
+        for(var i of crfplc){
+            $('#container').innerHTML += i.div(ppos)
+        }
+        var hold = []
+        crfplc.forEach((val)=>{hold.push(val.pos)})
+        collinf = sim(hold,ppos)
+        console.log(collinf)
+        if(collinf.dist < sqsize){
+            alert(`collide at dist ${collinf.dist}`)
+        }
+    },30)
+    document.onkeypress = function(e){
+        if(!coll){
+            var motion = {
+                'w':[0,-20],
+                'a':[-20,0],
+                's':[0,20],
+                'd':[20,0]
+            }
+            if(motion[e.key]){
+                var hold = motion[e.key]
+                ppos[0] += hold[0];
+                ppos[1] += hold[1]
+            }
+        }
+    }
+    </script>
+</body>
+</html>

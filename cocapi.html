@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Clash of Clans player statistics</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        .container{
+            border: 2px solid black;
+        }
+        .label{
+            font-weight: bold;
+            background-color: aqua;
+        }
+        td{
+            border:2px solid royalblue;
+        }
+        table{
+            overflow: scroll;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <div id='tcontainer' class="container">
+        <form class="container">
+            <label for='playid'>Player Tag:</label>
+            <input required placeholder="EX:#A12B34C56" id='playid'/>
+            <button type='submit'>Learn stats</button>
+        </form>
+        <div id='stats' class="container">
+            <h4>You are very similar to <span id='closest'> someone</span></h4>
+            <h4>You are better than <span id='percent'> 50</span>% of the Clash of Clans players</h4>
+            <h4>You are <span id='names'> </span>, with a Town Hall <span id='level'></span></h4>
+        </div>
+        <table id='players'>
+            <tr id='name'><td class='label'>Player name</td></tr>
+            <tr id='th'><td class='label'>Town Hall level</td></tr>
+            <tr id='trophies'><td class='label'>Main Village Trophies</td></tr>
+            <tr id='bh'><td class='label'>Builder Hall level</td></tr>
+        </table>
+    </div>
+    <script>
+        class vector extends Array{
+            static dist(a,b){
+                var newarr = []
+                if (a.length == b.length){
+                    for(var i = 0;i < a.length;i++){
+                        newarr.push(Math.abs(a[i]-b[i]))
+                    }
+                }else{
+                    for(var i = 0;i < Math.max(a.length,b.length);i++){
+                        newarr.push(NaN)
+                    }
+                }
+                var ans = 0;
+                for (var i of newarr) {
+                   ans += i*i 
+                }
+                return Math.sqrt(ans)
+            }
+            scale(dilation){
+                var newarr = []
+                for (let i = 0; i < this.length; i++) {
+                    newarr.push(this[i]*dilation)
+                }
+                return newarr
+            }
+        }
+        var key = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkwNGRhNTk0LWQ2OWMtNGU0YS1iNDhlLWU3NTNjOTZhYjI2NiIsImlhdCI6MTYzMDgwMTg2NCwic3ViIjoiZGV2ZWxvcGVyLzgwN2U2M2Q2LTI2N2YtYTA1ZC1lZWQ3LWExMjYwOGJhY2Q1ZCIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjEwNC41NC4yMzcuMjE3IiwiNzEuMTYyLjE4Ny4xOTciXSwidHlwZSI6ImNsaWVudCJ9XX0.gsM4arh4bZFc1vaG72it4Zoj60IzOmTrP2lP6TxHtN9DUGRUSWkPCJ4Qb-WZ_V8qWsY2aDSo057t1CvK0E441w'
+        var tags = eval(localStorage.getItem('coctags'))
+        var taginf = {}
+        var thisplayer = {}
+        tags.filter((a)=>{return a!= undefined})
+        function apiupdate(playertag){
+            taginf = {}
+            if(tags.length > 0){
+                for(var i of tags){
+                    fetch(`https://api.clashofclans.com/v1/players/%23${i}`,{
+                        headers:{
+                            'Authorization':key,
+                        }
+                    }).then(response=>response.json()).then(data=>{
+                        if(('#'+playertag) == data.tag){
+                            thisplayer = data;
+                        }else{
+                        taginf[data.name] = data
+                        console.log(data,data.name,taginf,playertag,data.tag)
+                        }
+                    })
+                } 
+            }
+        }
+        apiupdate()
+        setTimeout(function(){
+            $('#name').html(`<td class='label'>Player name</td>`)
+            $('#th').html(`<td class='label'>Town Hall Level</td>`)
+            $('#trophies').html(`<td class='label'>Trophies</td>`)
+            $('#bh').html(`<td class='label'>Builder Hall Level</td>`)
+            for(var i of Object.entries(taginf)){
+                $('#name').append(`<td>${i[0]}</td>`)
+                $('#th').append(`<td>${i[1].townHallLevel}</td>`)
+                $('#trophies').append(`<td>${i[1].trophies}</td>`)
+                $('#bh').append(`<td>${i[1].builderHallLevel}</td>`)
+            }
+        },500)
+        $('form').submit(()=>{
+            event.preventDefault()
+            inptag = $('#playid').val().replace('#','')
+            tags.push(inptag)
+            tags = Array.from(new Set(tags))
+            
+            console.log(tags)
+            var localstore = []
+            for(var i of tags){
+                localstore.push(`"${i}"`)
+            }
+            localStorage.setItem('coctags',('[' + String(localstore) + ']').replaceAll('"undefined"',''))
+            apiupdate(inptag)
+            setTimeout(function(){
+                console.log(taginf,thisplayer)
+                var vecinf = {}
+                for(var i of Object.entries(taginf)){
+                    vecinf[i[0]] = new vector(i[1].townHallLevel,i[1].trophies,i[1].builderHallLevel)
+                }
+                var thisvect = new vector(thisplayer.townHallLevel,thisplayer.trophies,thisplayer.builderHallLevel)
+                console.log(thisvect)
+                var closest = []
+                for(var i of Object.entries(vecinf)){
+                    closest.push([i[0],vector.dist(thisvect,i[1])])
+                }
+                closest.sort((a,b)=>{return a[1]-b[1]})
+                console.log(closest)
+                $('#closest').text(closest[0][0])
+                var totalinf = taginf
+                totalinf[thisplayer.name] = thisplayer
+                totalinf = Object.entries(totalinf)
+                totalinf.sort((a,b)=>{return a[1].trophies < b[1].trophies})
+                var rank = totalinf.findIndex((a)=>{return a[0]==thisplayer.name})
+                $('#percent').text(((totalinf.length-rank)*100/totalinf.length))
+                $('#names').text(thisplayer.name)
+                $('#level').text(thisplayer.townHallLevel)
+                $('#name').html(`<td class='label'>Player name</td>`)
+                $('#th').html(`<td class='label'>Town Hall Level</td>`)
+                $('#trophies').html(`<td class='label'>Trophies</td>`)
+                $('#bh').html(`<td class='label'>Builder Hall Level</td>`)
+                for(var i of Object.entries(taginf)){
+                    $('#name').append(`<td>${i[0]}</td>`)
+                    $('#th').append(`<td>${i[1].townHallLevel}</td>`)
+                    $('#trophies').append(`<td>${i[1].trophies}</td>`)
+                    $('#bh').append(`<td>${i[1].builderHallLevel}</td>`)
+                }
+                console.log(totalinf[1][1].trophies,taginf,thisplayer)
+            },500)
+        })
+    </script>
+</body>
+</html>

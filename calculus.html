@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='UTF-8'>
+<title>Positive function graph</title>
+<style>
+#graph{
+width:70%;
+height:70%;
+border-color:black;
+}
+</style>
+</head>
+<body>
+<h1><input type='number' id='tn'/>x<sup><input type='number' id='pn'/></sup>+<input type='number' id='an'/>=y</h1><br/>
+<button id='Calc'>Calculate</button><br/>
+<h2>X = <input  type='number' id='ix'/>,Y <button id='='>=</button> <span id='y'>?</span></h2><hr/>
+<canvas id='graph'></canvas>
+<script>
+var x;
+var ansxy;
+document.getElementById('Calc').onmousedown = function(){
+x = 0;
+var timex = Number(document.getElementById('tn').value);
+var powex = Number(document.getElementById('pn').value);
+var adx = Number(document.getElementById('an').value);
+function xFound(variable){
+ansxy = Math.pow(variable,powex);
+ansxy *= timex;
+ansxy += adx;
+}
+var canvas = document.getElementById('graph');
+var canvaw = canvas.width;
+var canvah = canvas.height;
+var graph = canvas.getContext('2d');
+graph.clearRect(0,0,canvaw,canvah);
+document.getElementById('=').onmousedown = function(){
+var xin = Number(document.getElementById('ix').value);
+var yout = document.getElementById('y');
+xFound(xin);
+yout.innerHTML = ansxy;
+console.log(xin);
+console.log(timex);
+console.log(adx);
+console.log(powex);
+}
+graph.strokeStyle = 'green';
+graph.lineWidth = 2;
+graph.beginPath();
+graph.moveTo(0,canvah)
+while(x < canvaw){
+xFound(x);
+var truey = canvah - ansxy;
+graph.lineTo(x,truey);
+x += 1 / 10000;
+}
+graph.stroke();
+}
+</script>
+</body>
+</html>

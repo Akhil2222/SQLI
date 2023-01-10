@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>7th Coalition War</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='faction.js'></script>
+    <style>
+        .enemy,.player{
+            width:10px;
+            height:10px;
+            position:absolute;
+        }
+        .enemy{
+            background-color: red;
+        }
+        .player{
+            background-color:blue;
+        }
+    </style>
+</head>
+<body>
+    <div class='enemy' id='fac2'></div>
+    <script>
+        var militia = new set(11000,true);var playarmy;
+        var enemyarmy = new faction(militia,10,[0,0])
+        var playerid = 0;
+        document.onclick = function(e){
+            if(playerid == 0){
+                document.body.innerHTML += `<div class="player" id="player" style="top:${e.y}px;left:${e.x}px"></div>`
+                playarmy = new faction(militia,70,[e.x,e.y])
+                playerid++;
+                document.onkeydown = function(e){
+                    playarmy.move(motion[e.key])
+                }
+                setInterval(()=>{
+                    document.getElementById('player').style.left = playarmy.pos[0] + 'px'
+                    document.getElementById('player').style.top = playarmy.pos[1] + 'px'
+                    var dmg = playarmy.dmg(enemyarmy.pos)
+                    var dead = Object.keys(enemyarmy.stats)[Math.floor(Math.random()*Object.keys(enemyarmy.stats).length)];
+                    enemyarmy[dead] = Math.round(Math.max(0,enemyarmy[dead] - dmg/333))
+                    console.log(enemyarmy)
+                },30)
+            }
+            
+        }
+        var motion = {
+            'w':[0,-1],
+            'a':[-1,0],
+            's':[0,1],
+            'd':[1,0]
+        }
+        
+    </script>
+</body>
+</html>

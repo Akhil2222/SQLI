@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Magico esquare</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        td{
+            border:2px solid black;
+            width:3em;
+            height:3em;
+        }
+    </style>
+</head>
+<body>
+    <table id='container'>
+
+    </table>
+    <script>
+        var squares = Number(prompt('How many squares do you want?(Only Odd numbers'))
+        squares = Math.ceil(squares / 2) * 2 - 1
+        var num = 1;
+        var pos = [0,Math.floor(squares/2)]
+        for(var i = 0;i < squares;i++){
+            $('#container').append(`<tr id='r${i}'></tr>`)
+            for(var j = 0;j < squares;j++){
+                $(`#r${i}`).append(`<td id='c${j}'></td>`)
+            }
+        }
+        function ref(){
+            return $(`#r${pos[0]} #c${pos[1]}`)
+        }
+        ref().text(num)
+        for(var i = num;i < Math.pow(squares,2);i++){
+            var prevpos = [...pos]
+            pos[0] = (pos[0]-1)
+            if(pos[0] < 0){
+                pos[0] = squares - 1
+            }
+            pos[1] = (pos[1]+1) % squares
+            if(ref().text() != ''){
+                pos[0] = (prevpos[0] + 1)%squares
+                pos[1] = prevpos[1]
+                if(pos[0] < 0){
+                    pos[0] = squares - 1
+                }
+                
+            }            
+            ref().text(i + 1)
+        }
+        var sum  = 0;
+        for(var i = 0;i < squares;i++){
+            pos[0] = 0
+            pos[1] = i
+            sum += Number(ref().text())
+            
+        }
+        alert(sum)
+    </script>
+</body>
+</html>
