@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--Game Jam Theme - The Environment Changes You-->
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Wizard of Biomes</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        class vector extends Array{
+    
+    static dist(a,b){
+        var newarr = []
+        if (a.length == b.length){
+            for(var i = 0;i < a.length;i++){
+                newarr.push(a[i]-b[i])
+            }
+        }else{
+            for(var i = 0;i < Math.max(a.length,b.length);i++){
+                newarr.push(NaN)
+            }
+        }
+        return Math.hypot(...newarr)
+    }
+    static motion(a,b){
+        var returnobj = {};
+        var slope = (a[1]-b[1])/(a[0]-b[0])
+        returnobj.angle = Math.atan(slope)
+        if(b[0] < a[0]){
+            returnobj.angle = Math.PI + returnobj.angle
+        }
+        returnobj.angle = [returnobj.angle,returnobj.angle*180/Math.PI]
+        returnobj.slope = slope
+        return returnobj;
+    }
+    static add(a,b){
+        var retarr = []
+        for(var i in a){
+            retarr.push(a[i]+b[i])
+        }
+        return new vector(...retarr)
+    }
+    scale(dilation){
+        var newarr = []
+        for (let i = 0; i < this.length; i++) {
+            newarr.push(this[i]*dilation)
+        }
+        return new vector(...newarr)
+    }
+    static covar(x,y){
+        if(x.length == y.length){
+            var sumx = 0;
+            var sumy = 0;
+            for(var i in x){
+                sumx += x[i]
+                sumy += y[i]
+            }
+            console.log(sumx,sumy)
+            sumx = sumx/x.length
+            sumy = sumy/y.length
+            console.log(sumx,sumy)
+            var sum = 0;
+            for(var i in x){
+                sum += (x[i]-sumx)*(y[i]-sumy)
+            }
+            return sum/x.length
+        }else{
+            return NaN;
+        }
+    }
+    static zero(length){
+        var newarr = [];
+        for(var i = 0;i < length;i++){
+            newarr.push(0)
+        }
+        return new vector(...newarr)
+    }
+    static dot(a,b){
+        var sum = 0;
+        for(var i in a){
+            sum += a[i]*b[1]
+        }
+        return sum
+    }
+}
+function stats(arr){
+    var statobj = {
+
+    }
+    arr.sort((a,b)=>{return a-b})
+    if(arr.length % 2){
+        statobj.median = arr[Math.floor(arr.length/2)]
+    }else{
+        statobj.median = [arr[arr.length/2],arr[(arr.length-2)/2]]
+    }
+    statobj.range = arr[arr.length-1] - arr[0]
+    var sum = 0;
+    for(var i of arr){
+        sum += i;
+    }
+    statobj.mean = sum/arr.length;
+    var storearr = []
+    for(var i of arr){
+        var counter = 0;
+        var ind = arr.indexOf(i)
+        while(ind != -1){
+            counter++;
+            ind = arr.indexOf(i,ind + 1)
+        }
+        storearr.push(counter)
+    }
+    var holdarr = [...storearr].sort((a,b)=>{return b-a})
+
+    statobj.mode = arr[storearr.indexOf(holdarr[0])]
+    statobj.variance = vector.covar(new vector(...arr),new vector(...arr))
+    statobj.stdev = Math.sqrt(statobj.variance)
+    return statobj
+}
+function sim(arr,comp){
+    entries = []
+    thisvec = new vector(...comp)
+    for(var i of arr){
+        var vecthold = new vector(...i)
+        entries.push([i,vector.dist(thisvec,vecthold),arr.indexOf(i)])
+    }
+    entries.sort((a,b)=>{return a[1]-b[1]})
+    var obj = {
+        arr:entries[0][0],
+        comparr:comp,
+        dist:entries[0][1],
+        index:entries[0][2]
+    }
+    return obj
+}
+
+    </script>
+    <style>
+        table{
+            position:absolute;
+            left:0px;
+            top:0px;
+        }
+        #hp{
+            position:absolute;
+            color:red;
+            background-color:rgba(0, 0, 0, 0)
+        }
+        table,tr,td{
+            padding:0px;
+            margin:0px;
+        }
+        body{
+            overflow:hidden;
+            background-color: black;
+        }
+        .forest{
+            background-color:forestgreen;
+        }
+        .desert{
+            background-color:sandybrown;
+        }
+        .tundra{
+            background-color:snow;
+        }
+        .enemy{
+            width:20px;
+            height:20px;
+            border:2px solid red
+        }
+    </style>
+</head>
+<body>
+
+    <table id='biomes'></table>
+    <h1 id='wave'></h1>
+    <div id='wizcont'>
+        <h6 id='hp'></h6>
+        <img src='wizard/wizard.png' id='wizard'/>
+        <img src='wizard/wand.png' id='wand'>
+    </div>
+    <div id='enemies'>
+
+    </div>
+    <script>
+        
+        //update variables
+        var time = 0;
+        var waveTime = 0;
+        var wave = 0;
+        var wizpos;
+        var direction = vector.zero(2);
+        var health = 50;
+        var orighealth = health,prevhealth = health;
+        var biome;
+        var stats = {
+            speed:1,
+            damage:1,
+            regen:1
+        }
+        var modbiome = {
+            'forest':{
+                speed:1,
+                damage:1,
+                regen:2,
+            },
+            'desert':{
+                speed:2,
+                damage:1,
+                regen:0.5,
+            },
+            'tundra':{
+                speed:0.5,
+                damage:2,
+                regen:1
+            }
+        }
+        var moves;
+        function getRef(elx,ely){
+            return $(`[data-ref='${elx}_${ely}']`) 
+        }
+        var enemies = [];
+        //updates
+        setInterval(()=>{
+            //get biome, set a global variable for wizard's pos
+            wizpos = $('#wizard').offset() 
+            biome = getRef(Math.round(wizpos.left/100),Math.round(wizpos.top/100)).attr('class')
+            //Setting, updating, and showing the hp and wave
+            $('#hp').text(Math.round(health))
+            $('#hp').offset({'left':($('#wizard').offset().left + ($('#wizard').width()-$('#hp').width())/2),'top':($('#wizard').offset().top - $('#hp').height())})
+            if(health < orighealth){
+                health += (stats.regen*modbiome[biome].regen)/30
+            }       
+            if(health <= 0){
+                health = -Infinity;
+                alert(`${['Wow!','Awesome!'][Math.round(Math.random())]} You survived ${wave-1} waves!`)
+                location = 'file:///Users/akhily/Documents/projects%20that%20i%20can%20acsess/rpg/menu.html'
+            }
+            //Spawning enemies and making the enemies attack
+            if(enemies.length == 0){
+                stats.speed = 2/(1 + Math.exp(-(wave)))
+                stats.damage = Math.pow(1.1,wave)
+                wave++;
+                for(var i = 0;i < Math.round(10*Math.pow(1.09,wave));i++){
+                    enemies.push(new enemy(wave))
+                    enemies[i].create()
+                }
+                $('.enemy').click((e)=>{
+                    enemies.find((a)=>{return a.id == e.currentTarget.id}).health -= stats.damage*modbiome[biome].damage
+                })
+                alert(`Wave ${wave}\n Wave ${wave-1} took ${Math.round(waveTime*30/1000)} seconds`)
+                waveTime = 0;
+            }else{
+                var inc = 0
+                for(var i of enemies){
+                    i.move()
+                    if(i.pos[0] - wizpos.left < 20 && i.pos[0] - wizpos.left > 0){
+                        health -= i.damage*i.atkspeed*0.03
+                    }
+                    if(i.health <= 0){
+                        $('#'+i.id).remove()
+                        enemies.splice(inc,1)
+                    }
+                    inc++;
+                }
+            }     
+            
+            //setting speed for the Wizard
+            moves = {
+                'a':new vector(-(stats.speed*modbiome[biome].speed),0),
+                'w':new vector(0,-(stats.speed*modbiome[biome].speed)),
+                's':new vector(0,stats.speed*modbiome[biome].speed),
+                'd':new vector(stats.speed*modbiome[biome].speed,0),
+                'ArrowLeft':new vector(-(stats.speed*modbiome[biome].speed),0),
+                'ArrowUp':new vector(0,-(stats.speed*modbiome[biome].speed)),
+                'ArrowDown':new vector(0,stats.speed*modbiome[biome].speed),
+                'ArrowRight':new vector(stats.speed*modbiome[biome].speed,0),
+            }
+            // moving the wizard  
+            var posvect = new vector(...Object.values(wizpos).reverse())
+            posvect = vector.add(posvect,direction)
+            $('#wizard').offset({left:posvect[0],top:posvect[1]})
+
+            //moving the wand
+            $('#wand').offset({
+                left:(wizpos.left + Math.pow(Math.sin(time/10),2)*($('#wizard').width()+$('#wand').width())-$('#wand').width()),
+                top:(wizpos.top+$('#wizard').height()-$('#wand').height())
+            })
+            if((Math.sin(time/10)**2 - Math.sin((time+0.1)/10)**2) > 0 && $('#wand').offset().left - wizpos.left  < $('#wizard').width()){
+                $('#wand').offset({left: -100,top:wizpos.top+$('#wizard').height()-$('#wand').height()})
+            }
+            time++;
+            waveTime++;
+        },30)
+        //key movements        
+        $(document).keydown(function(event) {
+            direction = moves[event.key]
+        })
+        $(document).keyup(function(event) {
+            direction = new vector(0,0)
+        })
+        //biome
+        var thtml = '';
+        
+        for(var i = 0;i < window.innerHeight/100;i++){
+            thtml += '<tr>'
+            for(var j = 0;j < window.innerWidth/100;j++){
+                thtml += `<td data-ref='${j}_${i}'></td>`
+            }
+            thtml += '</tr>'
+        }
+        $('#biomes').html(thtml)
+       
+        $('table').css({'width':window.innerWidth,'height':window.innerHeight})
+        for(var i of $('td')){
+            var biomes = Object.keys(modbiome)
+            i.setAttribute('class',biomes[Math.floor(Math.random()*biomes.length)])
+        }
+        $('#wizard').offset({left:window.innerWidth/2,top:window.innerHeight/2})
+        $('#wizard').offset({left:(window.innerWidth/2 - $('#wand').width()),top:(window.innerHeight/2 - $('#wand').height())})
+        class enemy{
+            constructor(wave){
+                var power = Math.pow(1.09,wave)
+                var damage = Math.random()*power
+                this.damage = damage*5
+                this.health = Math.random()*(power - damage)
+                this.speed = (power - damage - this.health)*5
+                this.atkspeed = Math.max(1/Math.ceil(this.speed),1/10)
+                this.color = '#'+Math.round(Math.random()*(16**6-1)).toString(16)
+                this.id = Math.round(Math.random()*(36**7 - 1)).toString(36)
+                while(true){
+                    var pos = new vector(Math.random()*window.innerWidth,Math.random()*window.innerHeight)
+                    if(vector.dist(pos,Object.values(wizpos).reverse()) > 450){
+                        this.pos = pos;
+                        break;
+                    }
+                }
+            }
+            track(){
+                var slopang = vector.motion(this.pos,new vector(...Object.values(wizpos).reverse()))
+                var hold = new vector(1,slopang.slope)
+                hold = hold.scale(1/hold[1])
+                if(this.pos[1] > wizpos.top){
+                    hold[1] = -hold[1]
+                    hold[0] = -hold[0]
+                }
+                if(slopang.slope < 0.1 && slopang.slope > -0.1){
+                    hold = new vector(Math.sign(wizpos.left - this.pos[0])/Math.hypot(this.pos[0],wizpos.left),0)
+                }
+                return hold
+            }
+            create(){
+                $('#enemies').append(`<div id='${this.id}' class='enemy'></div>`)
+                $(`#${this.id}`).css({'background-color':this.color})
+                $(`#${this.id}`).offset({'left':this.pos[0],'top':this.pos[1]})
+            }
+            move(){
+                var moveVect = this.track()
+                this.pos = vector.add(this.pos,moveVect.scale(this.speed/Math.hypot(...moveVect)));
+                $(`#${this.id}`).offset({'left':this.pos[0],'top':this.pos[1]})
+            }
+        }
+        
+    </script>
+</body>
+</html>

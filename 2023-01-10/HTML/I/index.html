@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <title>Homepage</title>
+        <script src='jRip.js'></script>
+        <style>
+            .ad{
+                border:2px solid black;
+            }
+        </style>
+    </head>
+    <body id='intere'>
+        <img class='ad' src='Charlie corps.jpg'>
+        <p>Welcome to jtech.best,<span id='doi'> </span></p>
+		<div><h1><a href='calculus.html'>Positive function graph </a></h1><h3>is a graphing calculator that will graph,and give you <var>y</var> if you give it <var>x</var>.</h3></div>
+		<div><h1><a href='jCalc.html'>jCalc </a></h1><h3>is a calculator with 5 operations(addition,subtraction,multiplication,exponents,and division).</h3></div>
+		<div><h1><a href='jCalc2.html'>jCalc 2 </a></h1><h3>is a calculator with 8 operations(Square root,trigonometry,and 1/<var>x</var>).</h3></div>
+		<div><h1><a href='vr.html'>Vr cube </a></h1><h3>is a vr cube <h1></h1></h3></div>
+		<div><h1><a href='RiseOKingdom1757.html'>Fight! </a></h1><h3>is a game where you try to catch red.</h3></div>
+		<div><h1><a href='2prof.html'>2p Fight! </a></h1><h3>is like Fight!,but with 2 people.It has PvP mode,and Co-operation mode</h3></div>
+		<div><h1><a href='geo.html'>Sq dash </a></h1><h3>is like geometry dash</h3></div>
+	    <div><h1><a href='coookie.html'>Cookie clicker 2.8 </a></h1><h3>is like Cookie Clickers 2,with upgrades that go on to infinity,and 12 items to choose from(unlike FTG's 9)</h3></div>
+        <div><h1><a href='vent.html'>Among Us Notebook </a></h1><h3> is an actual Among us notebook! It has a vent map,a way to mark people as sus,clear,or dead,and has a place to write notes.</h3></div>
+        <div><h1><a href="minesweeper.html">Minesweeper</a></h1><h3>is just like the classic minesweeper game from a 10*10 board to a 37*37 board.</h3></div>
+        <div><h1><a href=".well-known/pac-man/index.html">Pac - Man</a></h1><h3>is Pac-man. No explaination needed</h3></div>
+        <div><h1><a href="suggest.html">Website Suggestions</a></h1><h3>is where you can suggest apps and games that I will make in the future</h3></div>
+        <div id='err'>
+        <button><h3>Can't decide? Click this.</h3></button>
+		<h1><var>x</var>-coordinate = <span id='xcoor'></span>,<var>y</var>-coordinate = <span id='ycoor'></span>,Slope = <span id='slope'></span></h1>
+		<h1 id='truth'></h1>
+        
+		<script>
+var triggered = false;
+var sx;
+var sy;
+var slope;
+if(localStorage.getItem('Adwant') == 'none'){
+    $('img').style.display = 'none'
+}
+document.getElementById('intere').onmousemove = function(event){
+  sx = Number(window.event.pageX);
+  sy = (window.innerHeight)-(Number(window.event.pageY)); 
+  slope = sy/sx;
+  if(sy < 0 && triggered == false){moomoo()}
+console.log(sx);
+console.log(sy);
+console.log(slope);
+document.getElementById('xcoor').innerHTML = sx;
+document.getElementById('ycoor').innerHTML = sy;
+document.getElementById('slope').innerHTML = slope;
+
+}
+document.getElementById('intere').onload = function(){
+var arr = ['Lucky dog!','You are cursed with unluckiness for one day'];
+var luckiness = arr[Math.round(Math.random())];
+document.getElementById('truth').innerHTML = luckiness;
+}
+$('.ad').onclick = function(){
+    var why = prompt('Why do you not like this ad?')
+    if(why.length > 0){
+        alert('We won\'t show the ad again')
+        $('img').style.display = 'none'
+        localStorage.setItem('Adwant','none')
+    }
+}
+var name;
+if(localStorage.getItem('name') == undefined){
+name = prompt('What is your name?');
+localStorage.setItem('name',name)
+document.getElementById('doi').innerHTML = name;
+}else{
+name = localStorage.getItem('name');
+document.getElementById('doi').innerHTML = name;
+}
+
+$('button').onmousedown = function(){
+var arr = [];
+for(i of $('a')){
+    arr.push(i.attr('href'))
+}
+console.log(arr)
+window.open(arr[Math.round(Math.random()*arr.length)]);
+}
+function moomoo(){
+    triggered == true
+    var hex = ''
+    var i = 0;
+    setInterval(()=>{
+    var arr = ['red','orange','yellow','green','blue','purple']
+    hex = arr[i % 6]
+    $('body').css('color:' + hex + ';')
+    i++
+    },1000)
+    
+}
+</script>
+</div>
+    </body>
+</html> 

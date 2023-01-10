@@ -1,0 +1,39 @@
+<!Doctype html>
+<html>
+<head>
+<meta charset='UTF-8'>
+<title>Square root,trigonometry,and 1/x</title>
+<style>
+</style>
+</head>
+<body>
+<div id='content'>
+<h1><select id='typeOthing'><option value='sqrt'>&#8730 </option><option value='sin'><em>sin</em></option><option value='cos'><em>cos</em></option><option value='tan'><em>tan</em></option><option value='csc'><em>csc</em></option><option value='sec'><em>sec</em></option><option value='cot'><em>cot</em></option><option value='ob'>1/</option></select><input id='numberx' type='number'/><button id='done'>=</button><span id='ans'>?</span></h1>
+</div>
+<script>
+document.getElementById('done').onmousedown = function(){
+var selval = document.getElementById('typeOthing').value;
+var x = Number(document.getElementById('numberx').value);
+var radtodeg = 180/Math.PI;
+if(selval == 'sqrt'){
+x = Math.sqrt(x);
+}else if(selval == 'sin'){
+x = Math.sin(x) * radtodeg;
+}else if(selval == 'cos'){
+x = Math.cos(x) * radtodeg;
+}else if(selval == 'tan'){
+x = Math.tan(x) * radtodeg;
+}else if(selval == 'csc'){
+x = (1 * radtodeg)/ Math.sin(x);
+}else if(selval == 'sec'){
+x = (1 * radtodeg)/Math.cos(x);
+}else if(selval == 'cot'){
+x = (1 * radtodeg)/Math.tan(x);
+}else if(selval = 'ob'){
+x = 1 / x;
+}
+document.getElementById('ans').innerHTML = x;
+}
+</script>
+</body>
+</html>

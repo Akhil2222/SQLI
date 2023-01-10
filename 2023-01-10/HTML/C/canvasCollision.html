@@ -1,0 +1,16 @@
+var collision = function(objectX,objectY,objectW,objectH,compareX,compareY,compareW,compareH){
+var use;
+var us;
+use = Math.pow((objectX - compareX),2);
+us = Math.pow((objectY - compareY),2);
+use += us;
+use = Math.sqrt(use);
+var maxW = Math.max(objectW,compareW);
+var maxH = Math.max(objectH,compareH);
+var avgW = (objectW,compareW)/2;
+var avgH = (objectH,compareH)/2;
+var distMax = Math.sqrt(Math.pow(maxW,2) + Math.pow(maxH,2));
+console.log(distMax);
+if(use <= maxW || use <= maxH || use <= distMax){
+return true;
+}}

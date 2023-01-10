@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Possible combinations</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+    <table>
+        
+    </table>
+    <script>
+        var arr = [];
+        for(var i = 0;i < 5+Math.round(Math.random()*5);i++){
+            arr.push(Math.round(Math.random()*30))
+        }
+        function cut(arr,ind){
+            var holdarr = [...arr]
+            holdarr.splice(ind,1)
+            if(holdarr.length > 0){
+            possibilities.push(holdarr)   
+            return holdarr         
+            } 
+        }
+        var possibilities = [arr]
+        var hold = []
+        for(var i in arr){
+            hold.push(cut(arr,i))
+        }
+        for(var i in arr){
+            hold2 = [];
+            for(var i of hold){
+                for(var j in i){
+                    hold2.push(cut(i,j))
+                }
+            }
+            hold = [...hold2]
+        }
+        console.log(possibilities)
+    </script>
+</body>
+</html>

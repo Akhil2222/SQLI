@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Algebra/Arithmetic speed test</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src='https://jtech.best/stats.js'></script>
+</head>
+<body>
+    <h1 id='quest'></h1>
+    <p><var>x</var> = <input id='answer' type='number' placeholder='Type answer;click enter'></p>
+    
+    <p id='type'></p>
+    <p><span id='right'>0</span>/<span id='total'>0</span></p>
+    <script>
+        var type = '',types = ['Arithmetic','Algebra']
+        class Arithmetic{
+            constructor(){
+                this.oper = ['+','-','*','/'][Math.floor(Math.random()*4)]
+                if(this.oper != '/'){
+                    this.num1 = Math.round(1 + Math.random()*99)
+                    this.num2 = Math.round(Math.random()*100)
+                }else{
+                    this.num1 = Math.round(1 + Math.random()*999)
+                    var fact = factor(this.num1)
+                    this.num2 = fact[Math.floor(Math.random()*fact.length)]
+                }
+            }
+            quest(){
+                $('#quest').text(String(this.num1) + this.oper + String(this.num2) + ' = x')
+            }
+            ans(){
+                return [eval(this.num1 + this.oper + this.num2)]
+            }
+        }
+        class Algebra{
+            constructor(){
+                this.degree = Math.ceil(Math.random()*4)
+                var facts = []
+                for(var i = 0; i < this.degree; i++){
+                    facts.push(Math.round(Math.random()*10) + 1)
+                }
+                this.fact = facts
+                var letters = 'abcdefghijklmnopqrstuvwxyz'
+                //The epsilon function will add up all possible combinations of the product of some coefficients
+                function epsilon(arr,num){
+                    var binarr = []
+                    var stanum = ''
+                    for(var i = 1;i <= num;i++){
+                        stanum += String(i)                                                
+                    }
+                    //Finding all possible combinations
+                    for(var i = parseInt(stanum,arr.length + 1);i < Math.pow(arr.length+1,num);i++){
+                        var str = i.toString(arr.length+1)
+                        var legit = true
+                        //Making sure that no number with 2 of the same digit enters the set
+                        for(var j = 1;j <= arr.length;j++){
+                            legit = legit && Boolean(Array.from(new Set(Array.from(str))).length == str.length)
+                        }
+                        //Making sure that the number does not have a 0
+                        legit = legit && !(Boolean((str).search('0') + 1))
+                        if(legit){
+                            str = Array.from(str).sort().toString().replaceAll(',','')
+                            binarr.push(str)
+                        }
+                    }
+                    binarr = Array.from(new Set(binarr))
+                    var sum = 0;
+                    for(var i of binarr){
+                        var product = 1;
+                        for(var j of i){
+                            product *= arr[j - 1]
+                        }
+                        sum += product
+                    }
+                    return sum
+                }
+                var scalar = Math.ceil(Math.random()*5)
+                var coeff = [scalar]
+                for(var i = 1;i <= this.degree;i++){
+                    coeff.push(scalar * epsilon(this.fact,i))
+                }
+                this.coeff = coeff
+            }
+            quest(){
+                var str = ''
+                for(var i in this.coeff){
+                    if(i < this.coeff.length - 2){
+                        str += `${this.coeff[i]}x<sup>${this.degree - i}</sup> + `
+                    }else if(i == this.coeff.length - 2){
+                        str += `${this.coeff[i]}x + `
+                    }else{
+                        str += String(this.coeff[i])
+                    }
+                }
+                str += ' = 0'
+
+                $('#quest').html(str)
+            }
+            ans(){
+                var hold = [];
+                for(var i of this.fact){
+                    hold.push(i * -1)
+                }
+                return hold
+                
+            }
+        }
+        var qans;
+        function newquest(){
+            type = types[Math.round(Math.random())]
+            $('#type').text(type)
+            var question = eval(`new ${type}`)
+            question.quest()
+            qans = question.ans()
+            console.log(question.ans())
+        }      
+        newquest()
+        var score = 0;questns = 0;
+        
+        $('input').keypress((e)=>{
+            if(e.key == 'Enter'){
+                score += Boolean(qans.indexOf(Number($('#answer').val())) + 1)
+                questns += 1
+                $('#right').text(score)
+                $('#total').text(questns)
+                alert(`Answer(s): ${String(qans)}`)
+                newquest()
+                $('#answer').val('')
+            }
+        })
+    </script>
+</body>
+</html>
