@@ -1,6 +1,6 @@
 import os
 path = '/Users/akhily/Documents/projects that i can acsess/2023-01-10'
-fileName = input('File Name: ')
+fileName = os.environ['fileName']
 fileParts = fileName.split('.')
 dirParts = [path,fileParts[1].upper(),fileParts[0][0].upper()]
 for i in range(1,len(dirParts)):
