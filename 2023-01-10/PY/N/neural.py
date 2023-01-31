@@ -1,4 +1,14 @@
 import numpy as np
+mnist = open('mnist_test.csv','r').read()
+mnist = mnist.split('\n')[1:]
+for i in range(len(mnist)):
+    hold = mnist[i].split(',')
+    
+    items = []
+    for i in range(28):
+        items.append(hold[1:][i*28:(i+1)*28])
+    items = np.matrix(items)
+    mnist[i] = (hold[0],items.shape)           
 class neural:
     def __init__(self,layarr):
         c = 0
@@ -12,19 +22,5 @@ class neural:
             for i in range(len(self.inputs)-1):
                 inp = inp*self.weights[i]
             return inp
-def cost(exparr,retarr):
-    return sum(abs(np.array(retarr) - np.array(exparr))[0])
-networks = []
-price = []
-for i in range(100):
-    networks.append(neural([4,4,2]))
-for i in networks:
-    costs = []
-    for j in range(15):
-        arr = []
-        for k in str(bin(j))[2:]:
-            arr.append(int(k))
-        arr = [0]*(4-len(arr)) + arr
-        costs.append(cost(neural([4,4,2]).doit(arr),[int(bool(j%3)),int(not bool(j%3))]))
-    price.append(sum(costs)/len(costs))
-print(price)
+
+print(neural([784,16,16,4]))
