@@ -17,7 +17,7 @@ app.get("/",async (req:any, res:response)=>{
 
 app.get("/records", async (req:{param:(key:string)=>string}, res:response)=>{
     try{
-        let sql:any[] = db.query(`select * from medicalRecords where userID='${(req.param("userID").replace(/^US/i,""))}' and passkey='${Bun.hash(req.param("pass"))}'`).all("N/A")
+        let sql:any[] = db.query(`select * from medicalRecords where userID='${req.param("userID")}' and passkey='${Bun.hash(decodeURIComponent(req.param("pass")))}'`).all("N/A")
         if(sql.length == 0){
             res.status(404).send("404: User ID & Password don't match");
         }
