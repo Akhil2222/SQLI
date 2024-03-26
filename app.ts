@@ -19,7 +19,7 @@ app.get("/records", async (req:{param:(key:string)=>string}, res:response)=>{
     try{
         let sql:any[] = db.query(`select * from medicalRecords where userID='${req.param("userID")}' and passkey='${Bun.hash(decodeURIComponent(req.param("pass")))}'`).all("N/A")
         if(sql.length == 0){
-            res.status(404).send("404: User ID & Password don't match");
+            res.status(401).send("401: User ID & Password don't match");
         }
         let file = await Bun.file("redirect.html").text();
         for(let i in sql[0]){
