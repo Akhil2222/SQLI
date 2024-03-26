@@ -1,0 +1,23 @@
+{
+  "name": "cyberinject",
+  "version": "1.0.0",
+  "description": "a test for sqli",
+  "main": "app.ts",
+  "scripts": {
+    "test": "bun app.ts"
+  },
+  "author": "Akhil Yadavalli",
+  "license": "ISC",
+  "dependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "crypto": "^1.0.1",
+    "express": "^4.19.2",
+    "qs": "^6.12.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
